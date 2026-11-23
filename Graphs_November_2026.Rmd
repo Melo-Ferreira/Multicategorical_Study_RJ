@@ -1,0 +1,267 @@
+---
+title: "Psychotropics and Psychosocial Work Conditions / Suplementar Material - Graphs"
+author: "Vanessa Melo"
+date: "2026"
+output: pdf_document
+---
+
+```{r, echo = TRUE}
+setwd("E:\\Artigo UERJ_MULTICAT")
+```
+
+```{r, echo = TRUE}
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+```
+
+# Graph 1 
+
+# Data A
+```{r, echo = TRUE}
+data_a <- data.frame(
+  Category = c("High level of influence on decisions",
+                "Learning new things",
+                "Use of skills at work",
+                "Work recognized and appreciated by management",
+               "Receiving help and support from colleagues"),
+  `Bank employees` = c(38.96, 28.88, 38.56,22.40, 55.21),
+  `Police officers` = c(52, 62, 61.20, 33.70, 67.20),
+  `Nursing professionals` = c(39.60, 58.50, 69.20, 26, 60.30)
+)
+```
+
+
+# Data A - In long format
+```{r, echo = TRUE}
+data_long <- pivot_longer(
+  data_a,
+  cols = -Category,
+  names_to = "Profissao",
+  values_to = "Percentual"
+)
+```
+
+```{r, echo = TRUE}
+data_long_a <- data_long %>% 
+  mutate(Group =  case_when(Profissao == "Bank.employees" ~"Bank employees",
+                               Profissao == "Police.officers" ~"Police officers",
+                               Profissao == "Nursing.professionals" ~"Nurses"))
+```
+
+# Barplot - Data A
+```{r, echo = TRUE}
+
+g1 <- ggplot(data_long_a,
+       aes(x = Category,
+           y = Percentual,
+           fill = Group)) +
+  geom_col(show.legend = FALSE, width = 0.8) +
+   geom_text(aes(label = Percentual),
+            hjust = 1,
+            size = 3) +
+  facet_wrap(~Group) +
+  scale_y_continuous(
+    limits = c(0, 100),
+    breaks = c(0, 25, 50, 75, 100 ),
+    labels = c("0", "25", "50", "75", "100")
+  ) +
+  scale_fill_brewer(palette = "Greys")+
+  coord_cartesian(ylim = c(0,100)) + coord_flip() +
+  labs(title = "Protective working conditions", 
+       y = NULL,
+       x = NULL ) +
+  theme(
+    panel.spacing = unit(0.8, "cm"),
+    plot.title = element_text(
+      hjust = -1.3,
+      face = "bold",
+      size = 12
+    )
+  )
+
+g1+ theme_dark()
+```
+
+# Data B
+```{r, echo = TRUE}
+data_b <- data.frame(
+  Category = c("Conflicting demands",
+                "Fast pace",
+                "No time to complete tasks",
+                "Falling behind with work",
+               "Emotionally demanding work",
+               "Negative impact on private life",
+               "Having to deal with other people's personal problems",
+               "Concern about unemployment"),
+  `Bank employees` = c(60.04, 83.12, 63.45, 49.61, 92.20, 76.60, 68.72, 66.50),
+  `Police officers` = c(33.60, 46.60, 75.60, 12.40, 74.80, 43.20, 69.60,21.60),
+  `Nursing professionals` = c(43.50, 68.40, 46.80, 23.00, 81.60, 48.10, 63.60, 52.50)
+)
+```
+
+
+# Data B - In long format
+```{r, echo = TRUE}
+data_long_2 <- pivot_longer(
+  data_b,
+  cols = -Category,
+  names_to = "Profissao",
+  values_to = "Percentual"
+)
+```
+
+```{r, echo = TRUE}
+data_long_b <- data_long_2 %>% 
+  mutate(Group =  case_when(Profissao == "Bank.employees" ~"Bank employees",
+                               Profissao == "Police.officers" ~"Police officers",
+                               Profissao == "Nursing.professionals" ~"Nurses"))
+```
+
+# Barplot - Data B
+```{r, echo = TRUE}
+g2 <- ggplot(data_long_b,
+       aes(x = Category,
+           y = Percentual,
+           fill = Group)) +
+  geom_col(show.legend = FALSE, width = 0.8) +
+   geom_text(aes(label = Percentual),
+            hjust = 1,
+            size = 3) +
+  facet_wrap(~Group) +
+  scale_y_continuous(
+    limits = c(0, 100),
+    breaks = c(0, 25, 50, 75, 100 ),
+    labels = c("0", "25", "50", "75", "100")
+  ) + 
+  scale_fill_brewer(palette = "Greys")+
+  coord_cartesian(ylim = c(0,100)) + coord_flip() +
+  labs(title = "Working conditions – Risk factors", 
+       y = "Percentage (%)",
+       x = NULL ) +
+  theme(
+    panel.spacing = unit(0.8, "cm"),
+    plot.title = element_text(
+      hjust = -1.3,
+      face = "bold",
+      size = 12
+    )
+  )
+
+g2 + theme_dark()
+```
+
+# Graph 1
+```{r, echo = TRUE}
+library(patchwork)
+
+ajuste_padrao <- theme(
+  plot.margin = margin(2, 2, 2, 2),
+  plot.title = element_text(size = 12, hjust = 0)
+)
+
+g1 <- g1 + theme_dark() + ajuste_padrao + theme(legend.position = "none") 
+
+g2 <- g2 + theme_dark() + ajuste_padrao + theme(legend.position = "none")
+
+
+# Montagem com alturas iguais
+p1 <- (g1 ) / (g2 )  +
+  plot_layout(heights = c(1, 1)) 
+
+p1
+
+ggsave("graph_1.png", width = 10, height = 8, dpi = 300)
+
+```
+
+# Graph 2
+
+# Data C
+```{r, echo = TRUE}
+data_c <- data.frame(
+  Category = as.factor(c("Use of psychotropic medications",
+                "Continuous use > 3 years",
+                "Self-medication",
+                "Family member or colleague expressed concern about the use",
+               "Withdrawal symptoms",
+               "Symptoms of tolerance",
+               "Feelings of guilt or shame",
+               "Attempt to stop on one's own")),
+  `Bank employees` = c(71.80, 34.20, 3.40, 68.81,74.31,37.40,56.10,53.30),
+  `Police officers` = c(39.69, 26.80, 18.50, 40.70, 55.80, 12.70, 41.40, 55.80),
+  `Nursing professionals` = c(52.32, 27.90, 7.60, 33.20, 54.10, 7.30, 23.80,28.40)
+)
+```
+
+
+# Data C - In long format
+```{r, echo = TRUE}
+data_long_3 <- pivot_longer(
+  data_c,
+  cols = -Category,
+  names_to = "Profissao",
+  values_to = "Percentual"
+)
+```
+
+```{r, echo = TRUE}
+data_long_c <- data_long_3 %>% 
+  mutate(Group =  case_when(Profissao == "Bank.employees" ~"Bank employees",
+                               Profissao == "Police.officers" ~"Police officers",
+                               Profissao == "Nursing.professionals" ~"Nurses"))
+```
+
+# Defining the display order in the plot: Since we are using `coord_flip()`, we need to set the `Category` levels in the reverse order of how you want them to appear in the plot.
+```{r, echo = TRUE}
+data_long_c$Category <- factor(
+  data_long_c$Category,
+  levels = c(
+    "Attempt to stop on one's own",
+    "Feelings of guilt or shame",
+    "Symptoms of tolerance",
+    "Withdrawal symptoms",
+    "Family member or colleague expressed concern about the use",
+    "Self-medication",
+    "Continuous use > 3 years",
+    "Use of psychotropic medications"
+  )
+)
+```
+
+
+# Barplot - Data C
+```{r, echo = TRUE}
+g3 <- ggplot(data_long_c,
+       aes(x = Category,
+           y = Percentual,
+           fill = Group)) +
+  geom_col(show.legend = FALSE) +
+   geom_text(aes(label = Percentual),
+            hjust = 0,
+            size = 3) +
+  facet_wrap(~Group) +
+  scale_y_continuous(
+    limits = c(0, 100),
+    breaks = c(0, 25, 50, 75, 100 ),
+    labels = c("0", "25", "50", "75", "100")
+  ) +
+  scale_fill_brewer(palette = "Greys")+
+  coord_cartesian(ylim = c(0,100)) + coord_flip() +
+  labs(title = NULL, 
+       y = "Percentage (%)",
+       x = NULL ) +
+  theme(
+    panel.spacing = unit(0.8, "cm"),
+    plot.title = element_text(
+      hjust = 1,
+      face = "bold",
+      size = 12
+    )
+  )
+
+g3 + theme_dark()
+
+ggsave("graph_2.png", width = 10, height = 8, dpi = 300)
+```
+
